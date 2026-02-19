@@ -86,51 +86,66 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <h1>Messages</h1>
+  <v-container>
+    <v-card class="pa-4 mb-6">
+      <v-card-title>
+        {{ isEditing ? 'Edit Message' : 'Create Message' }}
+      </v-card-title>
 
-    <h2>Create Message</h2>
+      <v-card-text>
+        <v-text-field v-model="newMessage.subject" label="Subject" />
 
-    <div>
-      <input v-model="newMessage.subject" placeholder="Subject" />
-      <input v-model="newMessage.message" placeholder="Message" />
-      <input v-model="newMessage.date" type="datetime-local" />
-      <input v-model="newMessage.senderName" placeholder="Sender name" />
+        <v-text-field v-model="newMessage.message" label="Message" />
 
-      <select v-model="newMessage.type">
-        <option value="incoming">Incoming</option>
-        <option value="outgoing">Outgoing</option>
-        <option value="task">Task</option>
-      </select>
+        <v-text-field v-model="newMessage.date" label="Date" type="datetime-local" />
 
-      <button @click="submitMessage">
-        {{ isEditing ? 'Update' : 'Create' }}
-      </button>
+        <v-text-field v-model="newMessage.senderName" label="Sender Name" />
 
-      <button v-if="isEditing" @click="resetForm">Cancel</button>
-    </div>
+        <v-select
+          v-model="newMessage.type"
+          :items="['incoming', 'outgoing', 'task']"
+          label="Type"
+        />
+      </v-card-text>
 
-    <hr />
+      <v-card-actions>
+        <v-btn color="primary" @click="submitMessage">
+          {{ isEditing ? 'Update' : 'Create' }}
+        </v-btn>
 
-    <label>
-      Filter by type:
-      <select v-model="selectedType">
-        <option value="all">All</option>
-        <option value="incoming">Incoming</option>
-        <option value="outgoing">Outgoing</option>
-        <option value="task">Task</option>
-      </select>
-    </label>
+        <v-btn v-if="isEditing" color="grey" @click="resetForm"> Cancel </v-btn>
+      </v-card-actions>
+    </v-card>
 
-    <div v-if="loading">Loading...</div>
+    <v-card>
+      <v-card-title>Messages</v-card-title>
 
-    <ul v-else>
-      <li v-for="message in filteredMessages" :key="message.id">
-        {{ message.subject }} - {{ message.type }}
+      <v-card-text>
+        <v-select
+          v-model="selectedType"
+          :items="['all', 'incoming', 'outgoing', 'task']"
+          label="Filter by Type"
+          class="mb-4"
+        />
 
-        <button @click="editMessage(message)">Edit</button>
-        <button @click="deleteMessage(message.id)">Delete</button>
-      </li>
-    </ul>
-  </div>
+        <v-progress-circular v-if="loading" indeterminate />
+
+        <v-list v-else>
+          <v-list-item v-for="message in filteredMessages" :key="message.id">
+            <v-list-item-title> {{ message.subject }} ({{ message.type }}) </v-list-item-title>
+
+            <template #append>
+              <v-btn icon="mdi-pencil" size="small" @click="editMessage(message)" />
+              <v-btn
+                icon="mdi-delete"
+                size="small"
+                color="red"
+                @click="deleteMessage(message.id)"
+              />
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
