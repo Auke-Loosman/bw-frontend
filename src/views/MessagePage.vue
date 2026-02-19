@@ -5,6 +5,8 @@ import { messageService } from '@/services/messageService'
 
 const messages = ref<Message[]>([])
 const loading = ref<boolean>(false)
+const isEditing = ref<boolean>(false)
+const editingId = ref<number | null>(null)
 
 const selectedType = ref<MessageType | 'all'>('all')
 
@@ -33,13 +35,22 @@ const newMessage = ref<Message>({
   type: 'incoming',
 })
 
-const createMessage = async () => {
+const submitMessage = async () => {
   if (!newMessage.value.subject || !newMessage.value.message) {
     return
   }
 
-  await messageService.createMessage(newMessage.value)
+  if (isEditing.value && editingId.value) {
+    await messageService.updateMessage(editingId.value, newMessage.value)
+  } else {
+    await messageService.createMessage(newMessage.value)
+  }
 
+  resetForm()
+  await fetchMessages()
+}
+
+const resetForm = () => {
   newMessage.value = {
     subject: '',
     message: '',
@@ -48,7 +59,14 @@ const createMessage = async () => {
     type: 'incoming',
   }
 
-  await fetchMessages()
+  editingId.value = null
+  isEditing.value = false
+}
+
+const editMessage = (message: Message) => {
+  newMessage.value = { ...message }
+  editingId.value = message.id ?? null
+  isEditing.value = true
 }
 
 const deleteMessage = async (id?: number) => {
@@ -85,7 +103,11 @@ onMounted(() => {
         <option value="task">Task</option>
       </select>
 
-      <button @click="createMessage">Create</button>
+      <button @click="submitMessage">
+        {{ isEditing ? 'Update' : 'Create' }}
+      </button>
+
+      <button v-if="isEditing" @click="resetForm">Cancel</button>
     </div>
 
     <hr />
@@ -105,6 +127,8 @@ onMounted(() => {
     <ul v-else>
       <li v-for="message in filteredMessages" :key="message.id">
         {{ message.subject }} - {{ message.type }}
+
+        <button @click="editMessage(message)">Edit</button>
         <button @click="deleteMessage(message.id)">Delete</button>
       </li>
     </ul>
