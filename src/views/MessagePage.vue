@@ -8,7 +8,17 @@ const loading = ref<boolean>(false)
 const isEditing = ref<boolean>(false)
 const editingId = ref<number | null>(null)
 
+const snackbar = ref(false)
+const snackbarMessage = ref('')
+const snackbarColor = ref<'success' | 'error'>('success')
+
 const selectedType = ref<MessageType | 'all'>('all')
+
+const showSnackbar = (message: string, color: 'success' | 'error' = 'success') => {
+  snackbarMessage.value = message
+  snackbarColor.value = color
+  snackbar.value = true
+}
 
 const fetchMessages = async () => {
   loading.value = true
@@ -42,8 +52,10 @@ const submitMessage = async () => {
 
   if (isEditing.value && editingId.value) {
     await messageService.updateMessage(editingId.value, newMessage.value)
+    showSnackbar('Message updated successfully')
   } else {
     await messageService.createMessage(newMessage.value)
+    showSnackbar('Message created successfully')
   }
 
   resetForm()
@@ -73,6 +85,7 @@ const deleteMessage = async (id?: number) => {
   if (!id) return
 
   await messageService.deleteMessage(id)
+  showSnackbar('Message deleted successfully')
   await fetchMessages()
 }
 
@@ -147,5 +160,8 @@ onMounted(() => {
         </v-list>
       </v-card-text>
     </v-card>
+    <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="3000">
+      {{ snackbarMessage }}
+    </v-snackbar>
   </v-container>
 </template>
