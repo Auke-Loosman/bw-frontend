@@ -25,6 +25,39 @@ const filteredMessages = computed(() => {
   return messages.value.filter((message) => message.type === selectedType.value)
 })
 
+const newMessage = ref<Message>({
+  subject: '',
+  message: '',
+  date: '',
+  senderName: '',
+  type: 'incoming',
+})
+
+const createMessage = async () => {
+  if (!newMessage.value.subject || !newMessage.value.message) {
+    return
+  }
+
+  await messageService.createMessage(newMessage.value)
+
+  newMessage.value = {
+    subject: '',
+    message: '',
+    date: '',
+    senderName: '',
+    type: 'incoming',
+  }
+
+  await fetchMessages()
+}
+
+const deleteMessage = async (id?: number) => {
+  if (!id) return
+
+  await messageService.deleteMessage(id)
+  await fetchMessages()
+}
+
 watch(selectedType, (newValue) => {
   console.log('Filter changed to:', newValue)
 })
@@ -37,6 +70,25 @@ onMounted(() => {
 <template>
   <div>
     <h1>Messages</h1>
+
+    <h2>Create Message</h2>
+
+    <div>
+      <input v-model="newMessage.subject" placeholder="Subject" />
+      <input v-model="newMessage.message" placeholder="Message" />
+      <input v-model="newMessage.date" type="datetime-local" />
+      <input v-model="newMessage.senderName" placeholder="Sender name" />
+
+      <select v-model="newMessage.type">
+        <option value="incoming">Incoming</option>
+        <option value="outgoing">Outgoing</option>
+        <option value="task">Task</option>
+      </select>
+
+      <button @click="createMessage">Create</button>
+    </div>
+
+    <hr />
 
     <label>
       Filter by type:
@@ -53,6 +105,7 @@ onMounted(() => {
     <ul v-else>
       <li v-for="message in filteredMessages" :key="message.id">
         {{ message.subject }} - {{ message.type }}
+        <button @click="deleteMessage(message.id)">Delete</button>
       </li>
     </ul>
   </div>
