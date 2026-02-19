@@ -1,8 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import MessagePage from '@/views/MessagePage.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [],
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/',
+      redirect: '/messages',
+    },
+    {
+      path: '/messages',
+      name: 'messages',
+      component: MessagePage,
+    },
+  ],
 })
 
 export default router
