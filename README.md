@@ -1,48 +1,86 @@
-# .
+# BakerWare Challenge -- Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+## Overview
 
-## Recommended IDE Setup
+This project is a Vue 3 Single Page Application that consumes the
+Symfony API.\
+It provides a clean interface for creating, editing, deleting,
+filtering, and managing messages.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+---
 
-## Recommended Browser Setup
+## Tech Stack
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- Vue 3
+- TypeScript
+- Vite
+- Vue Router
+- Vuetify
+- Axios
 
-## Type Support for `.vue` Imports in TS
+---
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Features
 
-## Customize configuration
+- Create message
+- Update message
+- Delete message (with confirmation dialog)
+- Filter messages by type
+- Snackbar feedback
+- Basic client-side validation
+- API integration
+- Loading states
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+---
 
-## Project Setup
+## Installation
 
-```sh
 npm install
-```
 
-### Compile and Hot-Reload for Development
+---
 
-```sh
+## Running the Application
+
 npm run dev
-```
 
-### Type-Check, Compile and Minify for Production
+Default URL: http://localhost:5173
 
-```sh
-npm run build
-```
+---
 
-### Lint with [ESLint](https://eslint.org/)
+## API Configuration
 
-```sh
-npm run lint
-```
+The frontend expects the backend to run at: http://localhost:8000
+
+If using HTTPS, update the API base URL accordingly.
+
+---
+
+## Project Structure
+
+- components -- UI components
+- pages -- Route-level views
+- services -- API communication
+- types -- TypeScript interfaces
+
+---
+
+## Integration Notes
+
+The frontend consumes:
+
+- Full message objects from GET `/api/messages`
+- DTO-validated responses from backend
+- Optional backend filtering support via query parameters
+
+Filtering is currently performed client-side but can easily be switched
+to API-level filtering.
+
+---
+
+## Design Considerations
+
+- Clean separation between API layer and UI
+- Reusable service layer using Axios
+- Strong typing with TypeScript
+- Reactive state management
+- Minimal but structured UI
